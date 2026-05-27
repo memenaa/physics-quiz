@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Физические приборы — ОГЭ</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: #f2f0fa;
+  color: #1a1a2e;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+  min-height: 100vh;
+  padding: 20px 16px 60px;
+}
+.page { max-width: 1100px; margin: 0 auto; }
+.header { margin-bottom: 20px; }
+.header-title { font-size: 22px; font-weight: 700; }
+.header-sub { font-size: 13px; color: #8892b0; margin-top: 2px; }
+.layout { display: flex; gap: 20px; align-items: flex-start; }
+.col-left { flex: 1; min-width: 0; }
+.col-right { width: 340px; flex-shrink: 0; display: flex; flex-direction: column; gap: 10px; }
+
+.stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+.stat { background: #fff; border-radius: 14px; padding: 12px 14px; display: flex; align-items: center; gap: 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.07); }
+.stat-ico { width: 40px; height: 40px; border-radius: 10px; font-size: 20px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.ico-gray{background:#e6e2f5}.ico-green{background:#e8faf2}.ico-red{background:#fef0f0}.ico-blue{background:#eef2ff}
+.stat-lbl { font-size: 11px; color: #8892b0; font-weight: 500; }
+.stat-val { font-size: 24px; font-weight: 700; line-height: 1.1; }
+
+.prog-card { background: #fff; border-radius: 14px; padding: 12px 14px; margin-bottom: 14px; box-shadow: 0 1px 4px rgba(0,0,0,0.07); }
+.prog-meta { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 8px; }
+.prog-lbl { font-weight: 600; }
+.prog-pct { color: #8892b0; }
+.prog-bar { height: 7px; background: #e2ddf5; border-radius: 99px; overflow: hidden; margin-bottom: 8px; }
+.prog-fill { height: 7px; background: #8a7dc8; border-radius: 99px; transition: width 0.35s; }
+.mode-badge { display: inline-block; background: #ece8f8; color: #7c6fc4; font-size: 12px; font-weight: 600; border-radius: 99px; padding: 3px 10px; }
+
+.tabs { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 14px; }
+.tab {
+  padding: 8px 16px; border-radius: 99px; font-size: 13px; font-weight: 500;
+  cursor: pointer; border: 1.5px solid #d4ceee;
+  background: #fff; color: #8892b0;
+  font-family: inherit; -webkit-appearance: none;
+  display: inline-block; text-align: center;
+  -webkit-user-select: none; user-select: none;
+  touch-action: manipulation;
+}
+.tab.active { background: #8a7dc8; border-color: #8a7dc8; color: #fff; font-weight: 600; }
+
+.q-card { background: #fff; border-radius: 18px; padding: 18px; margin-bottom: 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.07); }
+.q-type { font-size: 11px; font-weight: 700; color: #b0b8d0; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 8px; }
+.q-name { font-size: 19px; font-weight: 700; margin-bottom: 14px; line-height: 1.3; }
+.q-stmt { background: #ece8f8; border: 1.5px solid #cec7e8; border-radius: 11px; padding: 13px 15px; font-size: 15px; line-height: 1.6; color: #2d3561; margin-bottom: 14px; }
+.q-stmt.true  { background: #f0fbf5; border-color: #34c97a; }
+.q-stmt.false { background: #fff5f5; border-color: #ff6b7a; }
+
+.btn-row { display: flex; gap: 9px; }
+.ans-btn {
+  flex: 1; padding: 14px 10px; border-radius: 12px;
+  font-size: 15px; font-weight: 600;
+  border: 1.5px solid #cec7e8; background: #ece8f8; color: #4a406e;
+  font-family: inherit; -webkit-appearance: none; appearance: none;
+  cursor: pointer; display: block; text-align: center;
+  -webkit-user-select: none; user-select: none;
+  touch-action: manipulation;
+  /* iOS: make sure nothing blocks this element */
+  position: relative; z-index: 5;
+  /* no pointer-events restriction */
+}
+.ans-btn.correct { background: #e8faf2; border-color: #34c97a; color: #1a9a5c; }
+.ans-btn.wrong   { background: #fff0f0; border-color: #ff6b7a; color: #cc3344; }
+.ans-btn.reveal  { background: #e8faf2; border-color: #34c97a; color: #1a9a5c; }
+.ans-btn.dimmed  { opacity: 0.5; }
+
+.feedback { margin-top: 11px; padding: 11px 13px; border-radius: 11px; font-size: 14px; line-height: 1.55; display: none; }
+.feedback.show { display: block; }
+.fb-ok   { background: #e8faf2; color: #1a6640; }
+.fb-fail { background: #fff0f0; color: #8b1a2a; }
+
+.next-btn {
+  display: none; width: 100%; padding: 14px; border-radius: 12px;
+  font-size: 15px; font-weight: 600; cursor: pointer;
+  border: none; background: #8a7dc8; color: #fff;
+  font-family: inherit; -webkit-appearance: none; appearance: none;
+  touch-action: manipulation;
+  -webkit-user-select: none; user-select: none;
+  margin-top: 10px;
+}
+.next-btn.show { display: block; }
+
+.btn-pdf {
+  width: 100%; padding: 12px; border-radius: 12px; font-size: 14px; font-weight: 600;
+  cursor: pointer; border: 1.5px solid #b8aee0; background: #e6e2f5; color: #6b5ea8;
+  font-family: inherit; -webkit-appearance: none; appearance: none;
+  display: block; text-align: center;
+  touch-action: manipulation;
+  opacity: 0.4;
+}
+.btn-pdf.active { opacity: 1; cursor: pointer; }
+
+.hist-card { background: #fff; border-radius: 18px; padding: 15px 18px; box-shadow: 0 1px 4px rgba(0,0,0,0.07); }
+.hist-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.hist-title { font-size: 15px; font-weight: 700; }
+.hist-cnt { background: #8a7dc8; color: #fff; font-size: 12px; font-weight: 700; border-radius: 99px; padding: 2px 9px; }
+.hist-empty { font-size: 13px; color: #b0b8d0; text-align: center; padding: 10px 0; }
+.hist-scroll { max-height: 580px; overflow-y: auto; display: flex; flex-direction: column; gap: 7px; }
+.h-item { display: flex; align-items: flex-start; gap: 9px; padding: 9px 11px; border-radius: 10px; background: #eae6f6; }
+.h-item.ok   { background: #f0fbf5; }
+.h-item.fail { background: #fff5f5; }
+.h-n { width: 22px; height: 22px; border-radius: 99px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; background: #d4ceee; color: #4a406e; }
+.h-n.ok   { background: #e8faf2; color: #1a9a5c; }
+.h-n.fail { background: #fff0f0; color: #cc3344; }
+.h-body { flex: 1; min-width: 0; }
+.h-name { font-size: 13px; font-weight: 600; margin-bottom: 1px; }
+.h-desc { font-size: 11px; color: #8892b0; line-height: 1.4; }
+.h-desc.ok   { color: #1a9a5c; }
+.h-desc.fail { color: #cc3344; }
+.h-ico { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+
+@media (max-width: 760px) {
+  .layout { flex-direction: column; }
+  .col-right { width: 100%; }
+  .hist-scroll { max-height: 380px; }
+}
+@media (max-width: 400px) {
+  .stat-val { font-size: 20px; }
+  .stat-ico { width: 34px; height: 34px; font-size: 17px; }
+}
+@media print {
+  @page { margin: 14mm 12mm; }
+  body { background: #fff !important; padding: 0; }
+  .layout { display: block !important; }
+  .col-left { display: none; }
+  .col-right { width: 100%; display: block; }
+  .btn-pdf { display: none !important; }
+  .hist-scroll { max-height: none; overflow: visible; }
+  .h-item { break-inside: avoid; }
+  .h-item.ok   { background: #f0fbf5 !important; border: 1px solid #c0ecd6; }
+  .h-item.fail { background: #fff5f5 !important; border: 1px solid #ffd0d5; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="header">
+    <div class="header-title">Физические приборы</div>
+    <div class="header-sub">Тренажёр ОГЭ по физике</div>
+  </div>
+  <div class="layout">
+    <div class="col-left">
+      <div class="stats">
+        <div class="stat"><div class="stat-ico ico-gray">📋</div><div><div class="stat-lbl">Всего</div><div class="stat-val" id="s-total">0</div></div></div>
+        <div class="stat"><div class="stat-ico ico-green">✅</div><div><div class="stat-lbl">Верно</div><div class="stat-val" id="s-correct" style="color:#1a9a5c">0</div></div></div>
+        <div class="stat"><div class="stat-ico ico-red">❌</div><div><div class="stat-lbl">Ошибок</div><div class="stat-val" id="s-wrong" style="color:#cc3344">0</div></div></div>
+        <div class="stat"><div class="stat-ico ico-blue">🎯</div><div><div class="stat-lbl">Точность</div><div class="stat-val" id="s-pct" style="color:#8a7dc8">—</div></div></div>
+      </div>
+      <div class="prog-card">
+        <div class="prog-meta"><span class="prog-lbl" id="p-lbl">Вопрос 0</span><span class="prog-pct" id="p-pct">0%</span></div>
+        <div class="prog-bar"><div class="prog-fill" id="prog" style="width:0%"></div></div>
+        <span class="mode-badge" id="mode-badge">🔀 Всё вместе</span>
+      </div>
+      <div class="tabs">
+        <div class="tab active" id="tab-mixed">Всё вместе</div>
+        <div class="tab" id="tab-measure">Что измеряет</div>
+        <div class="tab" id="tab-principle">Принцип работы</div>
+      </div>
+      <div class="q-card">
+        <div class="q-type" id="q-type">ЧТО ИЗМЕРЯЕТ · ЭТО ВЕРНОЕ ОПИСАНИЕ?</div>
+        <div class="q-name" id="q-name">Барометр</div>
+        <div class="q-stmt" id="q-stmt">измеряет силу</div>
+        <div class="btn-row">
+          <div class="ans-btn" id="btn-yes">✓ Верно</div>
+          <div class="ans-btn" id="btn-no">✗ Неверно</div>
+        </div>
+        <div class="feedback" id="fb"></div>
+      </div>
+      <div class="next-btn" id="btn-next">Следующий вопрос →</div>
+    </div>
+    <div class="col-right">
+      <div class="btn-pdf" id="btn-pdf">📄 Скачать PDF-отчёт</div>
+      <div class="hist-card">
+        <div class="hist-head">
+          <span class="hist-title">История ответов</span>
+          <span class="hist-cnt" id="h-cnt">0</span>
+        </div>
+        <div class="hist-scroll" id="h-list"><div class="hist-empty">Ответы появятся здесь</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+var M=[["Барометр","измеряет атмосферное давление"],["Барометр-анероид","измеряет атмосферное давление"],["Динамометр","измеряет силу"],["Манометр","измеряет давление внутри газа (жидкости)"],["Мензурка","измеряет объём жидкости"],["Рычажные весы","измеряют массу"],["Секундомер","измеряет интервалы времени"],["Спидометр","измеряет скорость"],["Эхолот","измеряет глубины водоёмов"],["Ареометр","измеряет плотность"],["Гигрометр","измеряет влажность воздуха и других газов"],["Калориметр","измеряет количество теплоты, выделяющееся или поглощающееся в процессе"],["Психрометр","измеряет относительную влажность воздуха"],["Термометр","измеряет температуру"],["Амперметр","измеряет силу тока"],["Ваттметр","измеряет мощность тока"],["Вольтметр","измеряет напряжение"],["Омметр","измеряет сопротивление"],["Спектрометр","измеряет длину световой волны"],["Электрометр","измеряет электрический заряд"],["Индивидуальный дозиметр","измеряет поглощённую дозу излучения"],["Камера Вильсона","измерение энергии заряженной частицы"]];
+var P=[["Барометр-анероид","зависимость деформации от действия силы"],["Высотомер","изменение атмосферного давления при подъёме в горы"],["Гидравлический пресс","передача давления внутри жидкости"],["Гидротурбина","превращение механической энергии в электрическую"],["Жидкостный манометр","зависимость гидростатического давления от высоты столба жидкости"],["Паровая турбина","превращение внутренней энергии пара в механическую"],["Поршневой жидкостный насос","действие атмосферного давления"],["Пружинный динамометр","зависимость силы упругости от деформации тела"],["Рычажные весы","условие равновесия рычага"],["Садовая тачка","условие равновесия рычага"],["Шлюз","поведение жидкости в сообщающихся сосудах"],["U-образный манометр","зависимость гидростатического давления от высоты столба жидкости"],["Двигатель внутреннего сгорания","превращение внутренней энергии в механическую"],["Жидкостный термометр","зависимость объёма жидкости от её температуры"],["Психрометр","уменьшение температуры жидкости при её испарении"],["Спиртовой термометр","объёмное расширение жидкости при нагревании"],["Термос","сохранение более высокой или низкой температуры вещества"],["Амперметр","зависимость силы, действующей на проводник с током в магнитном поле, от силы тока"],["Батарейка","явление электрического тока"],["Генератор переменного тока","электромагнитная индукция"],["Гальванический элемент","превращение химической энергии в электрическую"],["Демонстрационный гальванометр","зависимость силы, действующей на проводник с током, от силы тока"],["Индукционная плита","электромагнитная индукция"],["Компас","взаимодействие постоянных магнитов"],["Ксерокс","электризация"],["Лампа дневного света","световое действие тока"],["Лампа накаливания","тепловое действие тока, излучение нагретого тела"],["Магнитный сепаратор","взаимодействие электромагнита и железных предметов"],["Масс-спектрометр","действие магнитного поля на движущуюся заряженную частицу"],["Реостат","зависимость сопротивления проводника от его длины"],["Трансформатор","электромагнитная индукция"],["Циклотрон","действие магнитного и электрического полей на движущуюся заряженную частицу"],["Электродвигатель постоянного тока","действие магнитного поля на проводник с током"],["Электрометр","зависимость силы отталкивания одноимённых зарядов от их величины"],["Электродинамический микрофон","электромагнитная индукция"],["Электропаяльник","тепловое действие тока"],["Электрический утюг","тепловое действие тока"],["Электрический кипятильник","тепловое действие тока"],["Электрическая плита","тепловое действие тока"],["Зеркало","отражение света"],["Зеркальный перископ","отражение света"],["Зеркальный телескоп","отражение света"],["Кварцевые лампы","ультрафиолетовые волны"],["Лампы в соляриях","ультрафиолетовые волны"],["Лампы во флюорографических кабинетах","прохождение рентгеновских волн через ткани человека"],["Лампы дневного света (видимое излучение)","видимое излучение"],["Линза","преломление света"],["Обогреватель","инфракрасное излучение"],["Оптический микроскоп","преломление света"],["Очки","преломление света"],["Прибор подводной лодки","сверхдлинные радиоволны"],["Призменный спектроскоп","дисперсия света"],["Проекционный аппарат","преломление света"],["Радиолокатор","отражение электромагнитных волн"],["Тепловизор","излучение нагретым телом инфракрасных лучей"],["Термометр для бесконтактного измерения","излучение нагретым телом инфракрасных лучей"],["Счётчик Гейгера","ударная ионизация электронами атомов газа"]];
+
+var mode='mixed', cur=null, answered=false, seen={}, hist=[], tot=0, cor=0, wrg=0;
+
+function pool(){ return mode==='measure'?M:mode==='principle'?P:M.concat(P); }
+function rnd(a){ return a[Math.floor(Math.random()*a.length)]; }
+function fakes(ans,p){
+  var f=[],i; for(i=0;i<p.length;i++) if(p[i][1]!==ans) f.push(p[i][1]);
+  var r=[]; while(r.length<3&&f.length) r.push(f.splice(Math.floor(Math.random()*f.length),1)[0]);
+  return r;
+}
+
+function on(id, fn){
+  var el=document.getElementById(id);
+  if(!el) return;
+  el.addEventListener('click', fn);
+  el.addEventListener('touchend', function(e){ e.preventDefault(); fn(); });
+}
+
+function setMode(m){
+  mode=m; seen={};
+  var ids=['mixed','measure','principle'];
+  for(var i=0;i<ids.length;i++){
+    var t=document.getElementById('tab-'+ids[i]);
+    if(t) t.className='tab'+(m===ids[i]?' active':'');
+  }
+  var badges={measure:'📏 Что измеряет',principle:'⚙️ Принцип работы',mixed:'🔀 Всё вместе'};
+  document.getElementById('mode-badge').textContent=badges[m];
+  nextQ();
+}
+
+function updStats(){
+  document.getElementById('s-total').textContent=tot;
+  document.getElementById('s-correct').textContent=cor;
+  document.getElementById('s-wrong').textContent=wrg;
+  var pct=tot>0?Math.round(cor/tot*100):0;
+  document.getElementById('s-pct').textContent=tot>0?pct+'%':'—';
+  document.getElementById('prog').style.width=pct+'%';
+  document.getElementById('p-lbl').textContent='Вопрос '+(tot>0?tot:0);
+  document.getElementById('p-pct').textContent=pct+'%';
+}
+
+function updHist(){
+  var el=document.getElementById('h-list');
+  document.getElementById('h-cnt').textContent=hist.length;
+  if(!hist.length){el.innerHTML='<div class="hist-empty">Ответы появятся здесь</div>';return;}
+  var h='';
+  for(var i=hist.length-1;i>=0;i--){
+    var e=hist[i],n=i+1,ok=e.ok;
+    h+='<div class="h-item '+(ok?'ok':'fail')+'">'
+      +'<div class="h-n '+(ok?'ok':'fail')+'">'+n+'</div>'
+      +'<div class="h-body"><div class="h-name">'+e.name+'</div>'
+      +(ok?'<div class="h-desc ok">✓ '+e.ans+'</div>'
+          :'<div class="h-desc fail">✗ Неверно</div><div class="h-desc">Верно: '+e.ans+'</div>')
+      +'</div><div class="h-ico">'+(ok?'✅':'❌')+'</div></div>';
+  }
+  el.innerHTML=h;
+}
+
+function nextQ(){
+  answered=false;
+  var p=pool(), unseen=[], i;
+  for(i=0;i<p.length;i++) if(!seen[mode+i]) unseen.push(i);
+  if(!unseen.length){ seen={}; for(i=0;i<p.length;i++) unseen.push(i); }
+  var idx=unseen[Math.floor(Math.random()*unseen.length)];
+  seen[mode+idx]=true;
+  var item=p[idx], name=item[0], ans=item[1];
+  var showOk=Math.random()<0.5, fk=fakes(ans,p);
+  var shown=showOk?ans:(fk.length?rnd(fk):ans);
+  cur={name:name,ans:ans,shown:shown,ok:showOk};
+  var inM=false; for(i=0;i<M.length;i++) if(M[i][0]===name){inM=true;break;}
+
+  document.getElementById('q-type').textContent=(inM?'ЧТО ИЗМЕРЯЕТ':'ПРИНЦИП РАБОТЫ')+' · ЭТО ВЕРНОЕ ОПИСАНИЕ?';
+  document.getElementById('q-name').textContent=name;
+  document.getElementById('q-stmt').textContent=shown;
+  document.getElementById('q-stmt').className='q-stmt';
+  document.getElementById('fb').className='feedback';
+  document.getElementById('fb').innerHTML='';
+  document.getElementById('btn-yes').className='ans-btn';
+  document.getElementById('btn-no').className='ans-btn';
+  document.getElementById('btn-next').className='next-btn';
+}
+
+function doAnswer(yes){
+  if(answered) return;
+  answered=true;
+  var ok=(yes===cur.ok);
+  if(ok) cor++; else wrg++;
+  tot++;
+  updStats();
+  hist.push({name:cur.name,ans:cur.ans,ok:ok});
+  updHist();
+  document.getElementById('btn-pdf').className='btn-pdf active';
+
+  var by=document.getElementById('btn-yes');
+  var bn=document.getElementById('btn-no');
+  var fb=document.getElementById('fb');
+  var nx=document.getElementById('btn-next');
+  var st=document.getElementById('q-stmt');
+
+  st.className='q-stmt '+(cur.ok?'true':'false');
+  if(ok){
+    (yes?by:bn).className='ans-btn correct';
+    fb.className='feedback show fb-ok';
+    fb.innerHTML=cur.ok?'✓ Правильно! Это верное описание.':'✓ Правильно! Описание ложное. Верно: <strong>'+cur.ans+'</strong>';
+  } else {
+    (yes?by:bn).className='ans-btn wrong';
+    (yes?bn:by).className='ans-btn reveal';
+    fb.className='feedback show fb-fail';
+    fb.innerHTML=cur.ok?'✗ Ошибка. Верное описание: <strong>'+cur.ans+'</strong>':'✗ Ошибка. Верно: <strong>'+cur.ans+'</strong>';
+  }
+  nx.className='next-btn show';
+}
+
+// Attach all handlers after DOM ready
+window.onload = function(){
+  // Mark first question (Барометр) as seen
+  var p0=pool(), i;
+  for(i=0;i<p0.length;i++) if(p0[i][0]==='Барометр'){seen[mode+i]=true;break;}
+
+  on('btn-yes',  function(){ doAnswer(true);  });
+  on('btn-no',   function(){ doAnswer(false); });
+  on('btn-next', function(){ nextQ();         });
+  on('btn-pdf',  function(){ window.print();  });
+  on('tab-mixed',     function(){ setMode('mixed');     });
+  on('tab-measure',   function(){ setMode('measure');   });
+  on('tab-principle', function(){ setMode('principle'); });
+};
+</script>
+</body>
+</html>
