@@ -167,8 +167,8 @@ body {
       </div>
       <div class="q-card">
         <div class="q-type" id="q-type">ЧТО ИЗМЕРЯЕТ · ЭТО ВЕРНОЕ ОПИСАНИЕ?</div>
-        <div class="q-name" id="q-name">Барометр</div>
-        <div class="q-stmt" id="q-stmt">измеряет силу</div>
+        <div class="q-name" id="q-name"> </div>
+        <div class="q-stmt" id="q-stmt"> </div>
         <div class="btn-row">
           <div class="ans-btn" id="btn-yes">✓ Верно</div>
           <div class="ans-btn" id="btn-no">✗ Неверно</div>
@@ -307,10 +307,8 @@ function doAnswer(yes){
 
 // Attach all handlers after DOM ready
 window.onload = function(){
-  // Mark first question (Барометр) as seen
-  var p0=pool(), i;
-  for(i=0;i<p0.length;i++) if(p0[i][0]==='Барометр'){seen[mode+i]=true;break;}
-
+  nextQ();
+  updStats();
   on('btn-yes',  function(){ doAnswer(true);  });
   on('btn-no',   function(){ doAnswer(false); });
   on('btn-next', function(){ nextQ();         });
